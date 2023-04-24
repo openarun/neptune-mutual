@@ -1,23 +1,23 @@
 "use client";
+import { useEffect, useState } from "react";
 import Button from "@/components/elements/Button";
 import Modal from "@/components/elements/Modal/Modal";
+import { MdOutlineContentCopy } from 'react-icons/md';
 import type { MetaMask } from '@web3-react/metamask'
-import { hooks, metaMask } from "../../../lib/connectors/metaMask";
-import { useEffect, useState } from "react";
 import type { BigNumber } from '@ethersproject/bignumber'
 import { formatEther } from '@ethersproject/units'
+import { hooks, metaMask } from "@/lib/connectors/metaMask";
 import Spinner from "@/components/elements/Spinner";
-import { AiOutlineClose } from 'react-icons/ai';
-import { MdOutlineContentCopy } from 'react-icons/md';
+
 
 type WalletDetailsProps = {
     isOpen: boolean;
     onClose: () => void;
 }
+
 const { useChainId, useAccounts, useIsActivating, useIsActive, useProvider } = hooks
-
-
 const connector = metaMask as MetaMask;
+
 const WalletDetails = ({ isOpen, onClose }: WalletDetailsProps) => {
     const [balances, setBalances] = useState<BigNumber[]>();
     const [errorMsg, setErrorMsg] = useState<Error | null>();
@@ -27,15 +27,6 @@ const WalletDetails = ({ isOpen, onClose }: WalletDetailsProps) => {
     const accounts = useAccounts();
     const chainId = useChainId();
     const isActivating = useIsActivating();
-
-    useEffect(() => {
-        if (provider && accounts?.length) {
-            void Promise.all(accounts.map((account) => provider.getBalance(account))).then((balances) => {
-                setBalances(balances);
-            })
-        }
-    }), [provider, accounts]
-
 
     const handleConnect = () => {
         connector.activate(chainId).catch(e => {
@@ -55,8 +46,15 @@ const WalletDetails = ({ isOpen, onClose }: WalletDetailsProps) => {
     }
 
     useEffect(() => {
-        if (showClipboardToolTip) {
+        if (provider && accounts?.length) {
+            void Promise.all(accounts.map((account) => provider.getBalance(account))).then((balances) => {
+                setBalances(balances);
+            })
+        }
+    }), [provider, accounts]
 
+    useEffect(() => {
+        if (showClipboardToolTip) {
             const timeout = setTimeout(() => {
                 setShowClipboardToolTip(false);
             }, 500);
@@ -68,12 +66,8 @@ const WalletDetails = ({ isOpen, onClose }: WalletDetailsProps) => {
     }, [showClipboardToolTip]);
 
     return (
-        <Modal isOpen={isOpen} onClose={handleClose}>
+        <Modal isOpen={isOpen} onClose={handleClose} title="Wallet Details">
             <div className="space-y-10">
-                <div className="flex justify-between">
-                    <h3 className="text-2xl">Wallet details</h3>
-                    <AiOutlineClose size={22} onClick={handleClose} role="button" />
-                </div>
                 {isActive && balances &&
                     (
                         <div className="space-y-6 mx-4">
@@ -89,7 +83,6 @@ const WalletDetails = ({ isOpen, onClose }: WalletDetailsProps) => {
                                             </span>
                                         }
                                     </div>
-
                                 </div>
                             </div>
                             <div className="flex justify-between border-b border-gray-300">
@@ -130,7 +123,7 @@ const WalletDetails = ({ isOpen, onClose }: WalletDetailsProps) => {
                                         variant="primary"
                                         disabled={isActivating}
                                         onClick={handleConnect}>
-                                        {isActivating && <Spinner />} {errorMsg ? "Try Again!" : "Connect"}
+                                        {isActivating && <Spinner />} {errorMsg ? "Try Again!" : "Connect Now"}
                                     </Button>
                                 </div>
                                 <div className="w-1/2">

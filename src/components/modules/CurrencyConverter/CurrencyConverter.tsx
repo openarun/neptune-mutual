@@ -1,9 +1,8 @@
 "use client";
-import Button from "@/components/elements/Button";
 import { useEffect, useState } from "react";
-
-import { MdOutlineSwapVert, MdOutlineSwapVerticalCircle } from "react-icons/md"
+import { RiSwapFill } from "react-icons/ri"
 import WalletDetails from "../WalletDetails";
+import Button from "@/components/elements/Button";
 
 type Currency = {
     name: string;
@@ -49,25 +48,27 @@ function CurrencyConverter() {
 
     return (
         <>
-            <div className="space-y-4 bg-white px-12 py-20 rounded-xl shadow-2xl">
+            <div className="space-y-12 bg-white px-12 py-10 rounded-xl shadow-2xl">
                 <h2 className="text-3xl font-semibold">Currency Converter</h2>
                 <div className="flex flex-col gap-4">
                     <div className="space-y-4">
-                        <label>{baseCurrency} ({currencyRates[baseCurrency].name})</label>
-                        <div className="border-2 border-gray-300 focus-within:border-gray-500 rounded-md p-2">
-                            <input type="number" className="outline-none" value={baseAmt || ''} onChange={(e) => handleBaseChange(+e.target.value)} />
+                        <label htmlFor="basecurrency">{baseCurrency} ({currencyRates[baseCurrency].name})</label>
+                        <div className="border-2 border-gray-300 focus-within:border-gray-400 rounded-md p-4">
+                            <input type="number" id="basecurrency" className="outline-none" value={baseAmt || ''} onChange={(e) => handleBaseChange(+e.target.value)} />
                         </div>
                     </div>
                     <div className="flex justify-center">
-                        <MdOutlineSwapVert size={32} className="text-[#5D5D5E] hover:text-gray-900" onClick={swapCurrency} />
+                        <RiSwapFill role="button" aria-label="Swap" size={32} className="text-[#5D5D5E] hover:text-gray-900" onClick={swapCurrency} />
                     </div>
                     <div className="space-y-4">
-                        <label>{targetCurrency} ({currencyRates[targetCurrency].name})</label>
-                        <div className="border-2 border-gray-300 focus-within:border-gray-500 rounded-md p-2">
-                            <input type="number" className="outline-none" value={targetAmt || ''} onChange={(e) => handleTargetChange(+e.target.value)} />
+                        <label htmlFor="targetcurrency">{targetCurrency} ({currencyRates[targetCurrency].name})</label>
+                        <div className="border-2 border-gray-300 focus-within:border-gray-400 rounded-md p-4">
+                            <input type="number" id="targetcurrency" className="outline-none" value={targetAmt || ''} onChange={(e) => handleTargetChange(+e.target.value)} />
                         </div>
                     </div>
-                    <Button onClick={() => setOpenWalletDetails(true)} variant="text">Get Wallet Details</Button>
+                    <div className="pt-6">
+                        <Button onClick={() => setOpenWalletDetails(true)} variant="text">Get Wallet Details</Button>
+                    </div>
                 </div>
             </div>
             <WalletDetails isOpen={openWalletDetails} onClose={() => setOpenWalletDetails(false)} />
